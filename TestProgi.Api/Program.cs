@@ -8,6 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:4200") // Reemplaza con la URL de tu front-end local
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 
 builder.Services.AddScoped<ICostCalculationStrategy, BasicUserFeeStrategy>();
 builder.Services.AddScoped<ICostCalculationStrategy, SellerSpecialFeeStrategy>();
@@ -21,7 +31,7 @@ var app = builder.Build();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.UseCors("AllowLocalhost");
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Test Progi"));
 
